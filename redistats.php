@@ -126,7 +126,7 @@ if(class_exists('Redistats')) {
 			} else {
 				$button_name = 'Redistats';
 			}
-			add_menu_page('Redistats admin', $button_name, 'add_users', WP_PLUGIN_DIR."/Redistats-WP-Plugin/redistats-view.php", '', 'http://staticjw.com/images/stats.png', 110);
+			add_menu_page('Redistats admin', $button_name, 'add_users', WP_PLUGIN_DIR."/Redistats-WP-Plugin/view.php", '', 'http://staticjw.com/images/stats.png', 110);
 		}
 		
 		if(get_option('redistats_status') > 1) {

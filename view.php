@@ -20,4 +20,4 @@ if (is_multisite()) {
 
 $iframe_url = "https://redistats.com/stats?gid=".get_option( 'redistats_global_id' )."&pid=".$property_id."&hash=".md5(get_option('redistats_global_id').$property_id.get_option( 'redistats_api_key'));
 ?>
-<iframe src="<?php echo $iframe_url ?>" style="width:1000px;height:4000px;" frameborder="0" seamless></iframe>
+<iframe src="<?php echo $iframe_url ?>" style="width:100%;height:4000px;" frameborder="0" seamless></iframe>
