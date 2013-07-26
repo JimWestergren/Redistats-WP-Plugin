@@ -1,3 +1,18 @@
+<?php
+/*  Copyright 2013 TodaysWeb Ltda. (www.todaysweb.com, email: support@redistats.com)
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License, version 2, as 
+    published by the Free Software Foundation.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+	Full license: http://www.gnu.org/licenses/gpl-2.0.html
+*/
+?>
 <div class="wrapp">
 	<h2>
 		<img alt="" src="<?=plugins_url('redistats/images/logo.png');?>" style="margin-right: 10px; vertical-align: middle;" /> 
