@@ -132,19 +132,19 @@ if(class_exists('Redistats')) {
 				if (is_multisite()) {
 					$property_id = get_current_blog_id();
 				} else {
-					$property_id = get_option( 'redistats_property_id' );
+					$property_id = get_option('redistats_property_id');
 				}
-				echo "
-					<script>
-					(function() { 
-					    var redistats_uid = " . get_option( 'redistats_global_id' ) . "; 
-					    var redistats_pid = " . $property_id . "; 
-					    var x = document.createElement('script'), s = document.getElementsByTagName('script')[0]; 
-					    x.src = 'http://redistats.com/track.js?uid='+redistats_uid+'&pid='+redistats_pid+'&title='+document.title+'&referrer='+document.referrer; 
-					    s.parentNode.insertBefore(x, s); 
-					})(); 
-					</script>
-				";
+				echo "<script>
+(function() { // Redistats, track version 1.0
+	var global_id = ".get_option('redistats_global_id').";
+	var property_id = ".$property_id.";
+	var url = encodeURIComponent(window.location.href.split('#')[0]);
+	var referrer = encodeURIComponent(document.referrer);
+	var x = document.createElement('script'), s = document.getElementsByTagName('script')[0];
+	x.src = '//redistats.com/track.js?gid='+global_id+'&pid='+property_id+'&url='+url+'&referrer='+referrer;
+	s.parentNode.insertBefore(x, s);
+  })();
+</script>";
 			}
 				
 			if(get_option('redistats_status') > 0) {
