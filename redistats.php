@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: Redistats WP Plugin
+Plugin Name: Redistats
 Plugin URI: https://redistats.com/wordpress-plugin 
-Description: A brief description of the Plugin.
+Description: Web stats especially made for WordPress Multisite with a large number of blogs but also works on a single blog. No additional load on your server.
 Version: 0.1
 Author: TodaysWeb Ltda. (Nestor Otondo, Jim Westergren)
 Author URI: http://www.todaysweb.com/
@@ -29,8 +29,8 @@ if(!class_exists('Redistats')) {
 	class Redistats {
 		public function __construct() {
 			// register actions
-			add_action('admin_init', array(&$this, 'admin_init'));
-			add_action('admin_menu', array(&$this, 'add_menu'));
+			add_action('admin_init', array($this, 'admin_init'));
+			add_action('admin_menu', array($this, 'add_menu'));
 		}
 
 		public static function activate() {
@@ -53,19 +53,19 @@ if(!class_exists('Redistats')) {
 			register_setting('redistats-group', 'redistats_status');
 			register_setting('redistats-group', 'redistats_verification');
 			
-			add_settings_section('redistats-section', 'Redistats Settings',	array(&$this, 'section_callback'), 'redistats');
+			add_settings_section('redistats-section', 'Redistats Settings',	array($this, 'section_callback'), 'redistats');
 			
-			add_settings_field('redistats_api_key', 'API Key:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_api_key'));
+			add_settings_field('redistats_api_key', 'API Key:', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_api_key'));
 			
-			add_settings_field('redistats_global_id', 'User ID:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_global_id'));
+			add_settings_field('redistats_global_id', 'User ID:', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_global_id'));
 			
-			add_settings_field('redistats_property_id', 'Property ID:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_property_id'));
+			add_settings_field('redistats_property_id', 'Property ID:', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_property_id'));
 
-			add_settings_field('redistats_email', 'Email:', array(&$this, 'field_callback'), 'redistats',	'redistats-section',array('field' => 'redistats_email'));
+			add_settings_field('redistats_email', 'Email:', array($this, 'field_callback'), 'redistats',	'redistats-section',array('field' => 'redistats_email'));
 			
-			add_settings_field('redistats_status', 'Status: ', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_status'));
+			add_settings_field('redistats_status', 'Status: ', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_status'));
 			
-			add_settings_field('redistats_verification', 'Verification code: ', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_verification'));
+			add_settings_field('redistats_verification', 'Verification code: ', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_verification'));
 			
 		}
 		
@@ -76,12 +76,12 @@ if(!class_exists('Redistats')) {
 		public function field_callback($args) {
 			$field = $args['field'];
 			$value = get_option($field);
-			echo sprintf('<input type="text" name="%s" id="%s" value="%s" />', $field, $field, $value);
+			echo sprintf('<input type="text" name="%s" id="%s" value="%s">', $field, $field, $value);
 		}
 		
 		public function add_menu() {
 			if(is_super_admin()) {
-				add_options_page('Redistats Settings', 'Redistats', 'manage_options', 'redistats', array(&$this, 'plugin_settings_page'));
+				add_options_page('Redistats Settings', 'Redistats', 'manage_options', 'redistats', array($this, 'plugin_settings_page'));
 			}
 		}
 		
@@ -98,19 +98,20 @@ function redistats_show_message($message, $errormsg = false) {
 	if($errormsg) {
 		echo '<div id="message" class="error">';
 	} else {
-		echo '<div id="message" class="updated fade"><strong>'.$message.'</strong></div>';
+		echo '<div id="message" class="updated fade">';
 	}
+	echo "<strong>".$message."</strong></div>";
 }
 
-function show_no_valid_messages() {
-	redistats_show_message('Your parameters are incorrect. Please check it.', true);
+function message_proceed_to_install() {
+	redistats_show_message('Redistats: To finish the installation enter the settings <a href="options-general.php?page=redistats">here</a>.', true);
 }
-
+function error_message_invalid_parameters() {
+	redistats_show_message('Redistats: Your parameters are incorrect. Please check it.', true);
+}
 if(class_exists('Redistats')) { 
 	
 	require (ABSPATH.WPINC.'/pluggable.php');
-		
-	wp_get_current_user();
 		
 	register_activation_hook(__FILE__, array('Redistats', 'activate'));
 	register_deactivation_hook(__FILE__, array('Redistats', 'deactivate'));
@@ -120,13 +121,22 @@ if(class_exists('Redistats')) {
 	if (isset($redistats)) {
 			
 		function register_redistats_admin() {
-			add_menu_page('Redistats admin', 'Redistats', 'add_users', 'redistats/redistats-view.php', '', 'http://staticjw.com/images/stats.png', 110);
+			if (is_multisite()) {
+				$button_name = 'Stats';
+			} else {
+				$button_name = 'Redistats';
+			}
+			add_menu_page('Redistats admin', $button_name, 'add_users', WP_PLUGIN_DIR."/Redistats-WP-Plugin/redistats-view.php", '', 'http://staticjw.com/images/stats.png', 110);
 		}
-			
-		add_action('admin_menu', 'register_redistats_admin');
 		
-		if (get_option('redistats_verification') != md5(get_option('redistats_global_id').get_option('redistats_email').get_option('redistats_api_key').VERIFICATION_SALT)) {
-			add_action('admin_notices', 'show_no_valid_messages');
+		if(get_option('redistats_status') > 1) {
+			add_action('admin_menu', 'register_redistats_admin');
+		}
+		
+		if ($_GET['page'] != 'redistats' && get_option('redistats_verification') == '') {
+			add_action('admin_notices', 'message_proceed_to_install');
+		} else if ($_GET['page'] != 'redistats' && get_option('redistats_verification') != md5(get_option('redistats_global_id').get_option('redistats_email').get_option('redistats_api_key').VERIFICATION_SALT)) {
+			add_action('admin_notices', 'error_message_invalid_parameters');
 		} else {
 			function your_redistats() {
 				if (is_multisite()) {
@@ -134,7 +144,8 @@ if(class_exists('Redistats')) {
 				} else {
 					$property_id = get_option('redistats_property_id');
 				}
-				echo "<script>
+				echo "
+<script>
 (function() { // Redistats, track version 1.0
 	var global_id = ".get_option('redistats_global_id').";
 	var property_id = ".$property_id.";

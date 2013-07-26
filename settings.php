@@ -13,48 +13,10 @@
 	Full license: http://www.gnu.org/licenses/gpl-2.0.html
 */
 ?>
-<script>
-jQuery(document).ready(function()
-{
-
-	jQuery('#redistats_api_key').focusout(function()
-	{
-		var api_key = jQuery('#redistats_api_key').val();
-
-		if( !api_key.match(/^[a-f0-9]$/) )
-			alert('The api key can only be with characters a-f and 0-9');
-	});
-	
-	jQuery('#redistats_global_id').focusout(function()
-	{
-		var global_id = jQuery('#redistats_global_id').val();
-
-		if( !global_id.match(/^[0-9]+$/) )
-			alert('The user id must be a integer');
-	});
-	
-	jQuery('#redistats_email').focusout(function()
-	{
-		var email = jQuery('#redistats_email').val();
-
-		if( !email.match(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/) )
-			alert('The email is not valid.');
-	});
-
-	jQuery('#redistats_verification').focusout(function()
-	{
-		var api_key = jQuery('#redistats_verification').val();
-
-		if( !api_key.match(/^[a-f0-9]{32}$/) )
-			alert('The verification code must be a md5 value');
-	});
-});
-
-</script>
-
 <div class="wrap">
-	<h2>Redistats WP Plugin</h2>
-	<?php screen_icon(); ?>
+<?php screen_icon(); ?>
+<h2>Redistats</h2>
+	
 	<ol>
 		<li><a href="https://redistats.com/register">Register an account with Redistats</a> if you have not already done so.</li>
 		<li>Select your global stat property in the <a href="https://redistats.com/dashboard">dashboard</a> (create one if you haven't).</li>
@@ -62,22 +24,22 @@ jQuery(document).ready(function()
 	</ol>
 	<form id="form-redistats" method="post" action="options.php">
 		<?php settings_fields('redistats-group'); ?>
-		<?php do_settings_fields('redistats-group'); ?> 
+		<?php do_settings_fields('redistats-group', 'redistats-section'); ?> 
 				
 		<table class="form-table">
 			<tr valign="top">
 				<th scope="row">API key:</th>
-				<td><input type="text" name="redistats_api_key" id="redistats_api_key" value="<?php echo get_option( 'redistats_api_key' ); ?>" pattern="[0-9a-fA-F]" required></td>
+				<td><input type="text" name="redistats_api_key" id="redistats_api_key" value="<?php echo get_option( 'redistats_api_key' ); ?>" pattern="[0-9a-fA-F]{20,}$" required></td>
 			</tr>
 			<tr valign="top">
 				<th scope="row">Global ID:</th>
-				<td><input type="text" name="redistats_global_id" id="redistats_global_id" value="<?php echo get_option( 'redistats_global_id' ); ?>" pattern="[0-9]" required></td>
+				<td><input type="text" name="redistats_global_id" id="redistats_global_id" value="<?php echo get_option( 'redistats_global_id' ); ?>" pattern="[0-9]{1,}$" required></td>
 			</tr>
 			
 			<?php if (!is_multisite()) { ?>
 			<tr valign="top">
 				<th scope="row">Property ID:</th>
-				<td><input type="text" name="redistats_property_id" id="redistats_property_id" value="<?php echo get_option( 'redistats_property_id' ); ?>" pattern="[0-9]" required></td>
+				<td><input type="text" name="redistats_property_id" id="redistats_property_id" value="<?php echo get_option( 'redistats_property_id' ); ?>" pattern="[0-9]{1,}$" required></td>
 			</tr>
 			<?php } else { ?>
 				<input type="hidden" name="redistats_property_id" id="redistats_property_id" value="">
@@ -93,9 +55,9 @@ jQuery(document).ready(function()
 			<tr valign="top">
 				<th scope="row">Status:</th>
 				<td>
-					Active tracking and button to view stats visible: <input type="radio" name="redistats_status" id="redistats_status" value="2" <?php echo (get_option( 'redistats_status') == 2 ? 'checked' : ''); ?>><br>
-					Active tracking but button to view stats not yet visible: <input type="radio" name="redistats_status" id="redistats_status" value="1" <?php echo (get_option( 'redistats_status') == 1 ? 'checked' : ''); ?>><br>
-					The plugin is deactivated: <input type="radio" name="redistats_status" id="redistats_status" value="0" <?php echo (get_option( 'redistats_status') == 0 ? 'checked' : ''); ?>><br>
+					<input type="radio" name="redistats_status" id="redistats_status" value="2" <?php echo (get_option( 'redistats_status') == 2 ? 'checked' : ''); ?>> Active tracking and button to view stats visible.<br>
+					<?php if (is_multisite()) { ?><input type="radio" name="redistats_status" id="redistats_status" value="1" <?php echo (get_option( 'redistats_status') == 1 ? 'checked' : ''); ?>> Active tracking but button to view stats not yet visible.<br><?php } ?>	
+					<input type="radio" name="redistats_status" id="redistats_status" value="0" <?php echo (get_option( 'redistats_status') == 0 ? 'checked' : ''); ?>> The plugin is deactivated.<br>
 				</td>
 			</tr>
 		</table>

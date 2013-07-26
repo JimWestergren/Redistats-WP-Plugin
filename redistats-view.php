@@ -12,18 +12,12 @@
 
 	Full license: http://www.gnu.org/licenses/gpl-2.0.html
 */
-?>
-<div class="wrapp">
+if (is_multisite()) {
+	$property_id = get_current_blog_id();
+} else {
+	$property_id = get_option('redistats_property_id');
+}
 
-	<div id="redistats-iframe" style="height: 540px; position: absolute; width: 100%;">	
-	<table style="width: 100%; height: 100%">
-        <tr>
-            <td valign="top" align="left" height="100%">
-            
-		<iframe id="myFrame" src="http://redistats.com/results?uid=<?=get_option( 'redistats_global_id' );?>&pid=<?=get_current_blog_id();?>&hash=<?=md5( get_option( 'redistats_global_id' ) . get_current_blog_id() . get_option( 'redistats_api_key' ));?>" style="height: 100%; width: 100%;">Browser not compatible.</iframe>
-		
-			</td>
-		</tr>
-	</table>
-	</div>
-</div>
+$iframe_url = "https://redistats.com/stats?gid=".get_option( 'redistats_global_id' )."&pid=".$property_id."&hash=".md5(get_option('redistats_global_id').$property_id.get_option( 'redistats_api_key'));
+?>
+<iframe src="<?php echo $iframe_url ?>" style="width:1000px;height:4000px;" frameborder="0" seamless></iframe>

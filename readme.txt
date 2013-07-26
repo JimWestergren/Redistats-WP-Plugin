@@ -1,4 +1,4 @@
-=== Redistats WP Plugin ===
+=== Redistats ===
 Contributors: neorgon, jimwestergren 
 Tags: redistats, multisite, plugin, statistics, stats
 Requires at least: 3.0.1
