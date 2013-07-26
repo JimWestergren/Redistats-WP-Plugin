@@ -33,14 +33,6 @@ if(!class_exists('Redistats')) {
 			add_action('admin_menu', array($this, 'add_menu'));
 		}
 
-		public static function activate() {
-			// Do nothing
-		}
-		
-		public static function deactivate() {
-			// Do nothing
-		}
-		
 		public function admin_init() {
 			$this->init_settings();
 		}
@@ -52,31 +44,6 @@ if(!class_exists('Redistats')) {
 			register_setting('redistats-group', 'redistats_email', 'is_email');
 			register_setting('redistats-group', 'redistats_status');
 			register_setting('redistats-group', 'redistats_verification');
-			
-			add_settings_section('redistats-section', 'Redistats Settings',	array($this, 'section_callback'), 'redistats');
-			
-			add_settings_field('redistats_api_key', 'API Key:', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_api_key'));
-			
-			add_settings_field('redistats_global_id', 'User ID:', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_global_id'));
-			
-			add_settings_field('redistats_property_id', 'Property ID:', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_property_id'));
-
-			add_settings_field('redistats_email', 'Email:', array($this, 'field_callback'), 'redistats',	'redistats-section',array('field' => 'redistats_email'));
-			
-			add_settings_field('redistats_status', 'Status: ', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_status'));
-			
-			add_settings_field('redistats_verification', 'Verification code: ', array($this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_verification'));
-			
-		}
-		
-		public function section_callback() {
-			echo 'Settings for the Redistats plugin.';
-		}
-		
-		public function field_callback($args) {
-			$field = $args['field'];
-			$value = get_option($field);
-			echo sprintf('<input type="text" name="%s" id="%s" value="%s">', $field, $field, $value);
 		}
 		
 		public function add_menu() {
@@ -110,12 +77,7 @@ function error_message_invalid_parameters() {
 	redistats_show_message('Redistats: Your parameters are incorrect. Please check it.', true);
 }
 if(class_exists('Redistats')) { 
-	
-	require (ABSPATH.WPINC.'/pluggable.php');
 		
-	register_activation_hook(__FILE__, array('Redistats', 'activate'));
-	register_deactivation_hook(__FILE__, array('Redistats', 'deactivate'));
-	
 	$redistats = new Redistats();
 		
 	if (isset($redistats)) {
