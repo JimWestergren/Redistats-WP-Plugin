@@ -1,2 +1,0 @@
-Redistats-WP-Plugin
-===================
