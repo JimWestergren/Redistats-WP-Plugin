@@ -120,7 +120,7 @@ if(class_exists('Redistats')) {
 	if (isset($redistats)) {
 			
 		function register_redistats_admin() {
-			add_menu_page('Redistats admin', 'Redistats', 'add_users', 'redistats/redistats-view.php', '', plugins_url('redistats/images/icon.png'), 110);
+			add_menu_page('Redistats admin', 'Redistats', 'add_users', 'redistats/redistats-view.php', '', 'http://staticjw.com/images/stats.png', 110);
 		}
 			
 		add_action('admin_menu', 'register_redistats_admin');
