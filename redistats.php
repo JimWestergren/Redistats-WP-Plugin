@@ -47,18 +47,21 @@ if(!class_exists('Redistats')) {
 		
 		public function init_settings() {
 			register_setting('redistats-group', 'redistats_api_key');
-			register_setting('redistats-group', 'redistats_user_id');
+			register_setting('redistats-group', 'redistats_global_id');
+			register_setting('redistats-group', 'redistats_property_id');
 			register_setting('redistats-group', 'redistats_email', 'is_email');
 			register_setting('redistats-group', 'redistats_status');
 			register_setting('redistats-group', 'redistats_verification');
 			
 			add_settings_section('redistats-section', 'Redistats Settings',	array(&$this, 'section_callback'), 'redistats');
 			
-			add_settings_field('redistats_api_key', 'API Key:', array(&$this, 'field_callback'), 'redistats', 'redistats-section', array('field' => 'redistats_api_key'));
+			add_settings_field('redistats_api_key', 'API Key:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_api_key'));
 			
-			add_settings_field('redistats_user_id', 'User ID:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',	array('field' => 'redistats_user_id'));
+			add_settings_field('redistats_global_id', 'User ID:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_global_id'));
 			
-			add_settings_field('redistats_email', 'E-Mail:', array(&$this, 'field_callback'), 'redistats',	'redistats-section',array('field' => 'redistats_email'));
+			add_settings_field('redistats_property_id', 'Property ID:', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_property_id'));
+
+			add_settings_field('redistats_email', 'Email:', array(&$this, 'field_callback'), 'redistats',	'redistats-section',array('field' => 'redistats_email'));
 			
 			add_settings_field('redistats_status', 'Status: ', array(&$this, 'field_callback'), 'redistats', 'redistats-section',array('field' => 'redistats_status'));
 			
@@ -122,15 +125,20 @@ if(class_exists('Redistats')) {
 			
 		add_action('admin_menu', 'register_redistats_admin');
 		
-		if (get_option('redistats_verification') != md5(get_option('redistats_user_id').get_option('redistats_email').get_option('redistats_api_key').VERIFICATION_SALT)) {
+		if (get_option('redistats_verification') != md5(get_option('redistats_global_id').get_option('redistats_email').get_option('redistats_api_key').VERIFICATION_SALT)) {
 			add_action('admin_notices', 'show_no_valid_messages');
 		} else {
 			function your_redistats() {
+				if (is_multisite()) {
+					$property_id = get_current_blog_id();
+				} else {
+					$property_id = get_option( 'redistats_property_id' );
+				}
 				echo "
 					<script>
 					(function() { 
-					    var redistats_uid = " . get_option( 'redistats_user_id' ) . "; 
-					    var redistats_pid = " . get_current_blog_id() . "; 
+					    var redistats_uid = " . get_option( 'redistats_global_id' ) . "; 
+					    var redistats_pid = " . $property_id . "; 
 					    var x = document.createElement('script'), s = document.getElementsByTagName('script')[0]; 
 					    x.src = 'http://redistats.com/track.js?uid='+redistats_uid+'&pid='+redistats_pid+'&title='+document.title+'&referrer='+document.referrer; 
 					    s.parentNode.insertBefore(x, s); 
@@ -139,7 +147,7 @@ if(class_exists('Redistats')) {
 				";
 			}
 				
-			if(get_option('redistats_status')) {
+			if(get_option('redistats_status') > 0) {
 				add_action('wp_footer', 'your_redistats');
 			}
 		}

@@ -1,5 +1,5 @@
 <?php
-/*  Copyright 2013 TodaysWeb Ltda. (www.todaysweb.com, email: support@redistats.com)
+/*  Copyright 2013 TodaysWeb Ltda. (www.todaysweb.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License, version 2, as 
@@ -13,8 +13,7 @@
 	Full license: http://www.gnu.org/licenses/gpl-2.0.html
 */
 ?>
-<script type="text/javascript">
-
+<script>
 jQuery(document).ready(function()
 {
 
@@ -22,15 +21,15 @@ jQuery(document).ready(function()
 	{
 		var api_key = jQuery('#redistats_api_key').val();
 
-		if( !api_key.match(/^[a-f0-9]{32}$/) )
-			alert('The api key must be a md5 value');
+		if( !api_key.match(/^[a-f0-9]$/) )
+			alert('The api key can only be with characters a-f and 0-9');
 	});
 	
-	jQuery('#redistats_user_id').focusout(function()
+	jQuery('#redistats_global_id').focusout(function()
 	{
-		var user_id = jQuery('#redistats_user_id').val();
+		var global_id = jQuery('#redistats_global_id').val();
 
-		if( !user_id.match(/^[0-9]+$/) )
+		if( !global_id.match(/^[0-9]+$/) )
 			alert('The user id must be a integer');
 	});
 	
@@ -47,62 +46,60 @@ jQuery(document).ready(function()
 		var api_key = jQuery('#redistats_verification').val();
 
 		if( !api_key.match(/^[a-f0-9]{32}$/) )
-			alert('The api key must be a md5 value');
+			alert('The verification code must be a md5 value');
 	});
 });
 
 </script>
 
 <div class="wrap">
-	<h2>Redistats Plugin</h2>
-	<br />
-	<p>
-		<strong>Instructions:</strong>
-		<br />
-		Nullam et turpis lectus. Vivamus tincidunt risus tempor leo tempus volutpat. Aliquam feugiat ullamcorper mauris, a pulvinar felis cursus in. Maecenas at consequat magna. Duis eget laoreet tellus. Donec vel nibh vitae erat pulvinar viverra. Suspendisse potenti. Vivamus ac neque quis sapien malesuada facilisis. Donec cursus, lectus ac iaculis dignissim, nulla justo congue purus, semper laoreet enim risus quis nulla. Vestibulum eget ante a est eleifend faucibus at et nisl. Nunc facilisis dignissim ligula ut tempor.
-	</p>
-	<br />
+	<h2>Redistats WP Plugin</h2>
+	<?php screen_icon(); ?>
+	<ol>
+		<li><a href="https://redistats.com/register">Register an account with Redistats</a> if you have not already done so.</li>
+		<li>Select your global stat property in the <a href="https://redistats.com/dashboard">dashboard</a> (create one if you haven't).</li>
+		<li>Scroll down on that page and fill in the corresponding values below:</li>
+	</ol>
 	<form id="form-redistats" method="post" action="options.php">
-		<?php @settings_fields( 'redistats-group' ); ?>
-		
-		<?php @do_settings_fields( 'redistats-group' ); ?> 
-		
-		<?php //do_settings_sections( 'redistats' ); ?>
-		
+		<?php settings_fields('redistats-group'); ?>
+		<?php do_settings_fields('redistats-group'); ?> 
+				
 		<table class="form-table">
 			<tr valign="top">
-				<th scope="row">API Key:</th>
-				<td>
-					<input type="text" name="redistats_api_key" id="redistats_api_key" value="<?php echo get_option( 'redistats_api_key' ); ?>" required />
-				</td>
+				<th scope="row">API key:</th>
+				<td><input type="text" name="redistats_api_key" id="redistats_api_key" value="<?php echo get_option( 'redistats_api_key' ); ?>" pattern="[0-9a-fA-F]" required></td>
 			</tr>
 			<tr valign="top">
-				<th scope="row">User ID:</th>
-				<td>
-					<input type="text" name="redistats_user_id" id="redistats_user_id" value="<?php echo get_option( 'redistats_user_id' ); ?>" required />
-				</td>
+				<th scope="row">Global ID:</th>
+				<td><input type="text" name="redistats_global_id" id="redistats_global_id" value="<?php echo get_option( 'redistats_global_id' ); ?>" pattern="[0-9]" required></td>
+			</tr>
+			
+			<?php if (!is_multisite()) { ?>
+			<tr valign="top">
+				<th scope="row">Property ID:</th>
+				<td><input type="text" name="redistats_property_id" id="redistats_property_id" value="<?php echo get_option( 'redistats_property_id' ); ?>" pattern="[0-9]" required></td>
+			</tr>
+			<?php } else { ?>
+				<input type="hidden" name="redistats_property_id" id="redistats_property_id" value="">
+			<?php } ?>
+			<tr valign="top">
+				<th scope="row">Email:</th>
+				<td><input type="email" name="redistats_email" id="redistats_email" value="<?php echo get_option( 'redistats_email'); ?>" required></td>
 			</tr>
 			<tr valign="top">
-				<th scope="row">E-Mail:</th>
-				<td>
-					<input type="text" name="redistats_email" id="redistats_email" value="<?php echo get_option( 'redistats_email'); ?>" required />
-				</td>
+				<th scope="row">Verification code:</th>
+				<td><input type="text" name="redistats_verification" id="redistats_verification" value="<?php echo get_option( 'redistats_verification'); ?>" pattern="[0-9a-fA-F]{32}" required></td>
 			</tr>
 			<tr valign="top">
 				<th scope="row">Status:</th>
 				<td>
-					Active: <input type="radio" name="redistats_status" id="redistats_status" value="1" <?php echo (get_option( 'redistats_status') ? 'checked' : ''); ?> />
-					Deactive: <input type="radio" name="redistats_status" id="redistats_status" value="0" <?php echo (!get_option( 'redistats_status') ? 'checked' : ''); ?> />
-				</td>
-			</tr>
-			<tr valign="top">
-				<th scope="row">Verification code:</th>
-				<td>
-					<input type="text" name="redistats_verification" id="redistats_verification" value="<?php echo get_option( 'redistats_verification'); ?>" required />
+					Active tracking and button to view stats visible: <input type="radio" name="redistats_status" id="redistats_status" value="2" <?php echo (get_option( 'redistats_status') == 2 ? 'checked' : ''); ?>><br>
+					Active tracking but button to view stats not yet visible: <input type="radio" name="redistats_status" id="redistats_status" value="1" <?php echo (get_option( 'redistats_status') == 1 ? 'checked' : ''); ?>><br>
+					The plugin is deactivated: <input type="radio" name="redistats_status" id="redistats_status" value="0" <?php echo (get_option( 'redistats_status') == 0 ? 'checked' : ''); ?>><br>
 				</td>
 			</tr>
 		</table>
 		
-		<?php @submit_button(); ?> 
+		<?php submit_button(); ?> 
 	</form>
 </div>

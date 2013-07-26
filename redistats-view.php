@@ -23,7 +23,7 @@
         <tr>
             <td valign="top" align="left" height="100%">
             
-		<iframe id="myFrame" src="http://redistats.com/results?uid=<?=get_option( 'redistats_user_id' );?>&pid=<?=get_current_blog_id();?>&hash=<?=md5( get_option( 'redistats_user_id' ) . get_current_blog_id() . get_option( 'redistats_api_key' ));?>" style="height: 100%; width: 100%;">Browser not compatible.</iframe>
+		<iframe id="myFrame" src="http://redistats.com/results?uid=<?=get_option( 'redistats_global_id' );?>&pid=<?=get_current_blog_id();?>&hash=<?=md5( get_option( 'redistats_global_id' ) . get_current_blog_id() . get_option( 'redistats_api_key' ));?>" style="height: 100%; width: 100%;">Browser not compatible.</iframe>
 		
 			</td>
 		</tr>
