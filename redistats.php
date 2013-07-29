@@ -4,112 +4,62 @@ Plugin Name: Redistats
 Plugin URI: https://redistats.com/wordpress-plugin 
 Description: Web stats especially made for WordPress Multisite with a large number of blogs but also works on a single blog. No additional load on your server.
 Version: 0.1
-Author: TodaysWeb Ltda. (Nestor Otondo, Jim Westergren)
+Author: TodaysWeb (Jim Westergren)
 Author URI: http://www.todaysweb.com/
 License: GPL2
 */
 
 /*  Copyright 2013 TodaysWeb Ltda. (www.todaysweb.com)
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as 
-    published by the Free Software Foundation.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-	Full license: http://www.gnu.org/licenses/gpl-2.0.html
+	License: http://www.gnu.org/licenses/gpl-2.0.html
 */
 
-define('VERIFICATION_SALT', 'sdfdd_!dfggjdFGjsfhk736786suhcSDFSDG', true);
+//error_reporting(E_ALL);
+//ini_set('display_errors', '1');
 
-if(!class_exists('Redistats')) {
-	class Redistats {
-		public function __construct() {
-			// register actions
-			add_action('admin_init', array($this, 'admin_init'));
-			add_action('admin_menu', array($this, 'add_menu'));
-		}
+if(is_multisite()) {
+	$hook_prefix = 'network_';
+	add_action('_network_admin_menu', 'redistats' );
+	add_action('_admin_menu', 'redistats' );
+} else {
+	$hook_prefix = '';
+	add_action('_admin_menu', 'redistats' );
+}
 
-		public function admin_init() {
-			$this->init_settings();
-		}
-		
-		public function init_settings() {
-			register_setting('redistats-group', 'redistats_api_key');
-			register_setting('redistats-group', 'redistats_global_id');
-			register_setting('redistats-group', 'redistats_property_id');
-			register_setting('redistats-group', 'redistats_email', 'is_email');
-			register_setting('redistats-group', 'redistats_status');
-			register_setting('redistats-group', 'redistats_verification');
-		}
-		
-		public function add_menu() {
-			if(is_super_admin()) {
-				add_options_page('Redistats Settings', 'Redistats', 'manage_options', 'redistats', array($this, 'plugin_settings_page'));
-			}
-		}
-		
-		public function plugin_settings_page() { 
-			if(!current_user_can('manage_options')) {
-				wp_die( __( 'You do not have sufficient permissions to access this page.'));
-			}
-			include(sprintf("%s/settings.php", dirname(__FILE__)));
-		}
+if (is_multisite()) {
+	function message_proceed_to_install() {
+		echo('<div class="updated"><p>Redistats: To finish the installation enter the settings <a href="admin.php?page=redistats/settings.php">here</a>.</p></div>');
+	}
+	function redistats_settings() {
+		add_menu_page('Redistats settings', 'Redistats', 'activate_plugins', WP_PLUGIN_DIR."/redistats/settings.php", '', 'http://staticjw.com/images/stats.png', 110);
+	}
+} else {
+	function message_proceed_to_install() {
+		echo('<div class="updated"><p>Redistats: To finish the installation enter the settings <a href="options-general.php?page=redistats/settings.php">here</a>.</p></div>');
+	}
+	function redistats_settings() {
+		add_options_page('Redistats settings', 'Redistats', 'manage_options', WP_PLUGIN_DIR."/redistats/settings.php");
 	}
 }
 
-function redistats_show_message($message, $errormsg = false) {
-	if($errormsg) {
-		echo '<div id="message" class="error">';
+function redistats_button() {
+	if (is_multisite()) {
+		$button_name = 'Stats';
 	} else {
-		echo '<div id="message" class="updated fade">';
+		$button_name = 'Redistats';
 	}
-	echo "<strong>".$message."</strong></div>";
+	add_menu_page('Stats', $button_name, 'add_users', WP_PLUGIN_DIR."/redistats/view.php", '', 'http://staticjw.com/images/stats.png', 110);
 }
 
-function message_proceed_to_install() {
-	redistats_show_message('Redistats: To finish the installation enter the settings <a href="options-general.php?page=redistats">here</a>.', true);
-}
-function error_message_invalid_parameters() {
-	redistats_show_message('Redistats: Your parameters are incorrect. Please check it.', true);
-}
-if(class_exists('Redistats')) { 
-		
-	$redistats = new Redistats();
-		
-	if (isset($redistats)) {
-			
-		function register_redistats_admin() {
-			if (is_multisite()) {
-				$button_name = 'Stats';
-			} else {
-				$button_name = 'Redistats';
-			}
-			add_menu_page('Redistats admin', $button_name, 'add_users', WP_PLUGIN_DIR."/Redistats-WP-Plugin/view.php", '', 'http://staticjw.com/images/stats.png', 110);
-		}
-		
-		if(get_option('redistats_status') > 1) {
-			add_action('admin_menu', 'register_redistats_admin');
-		}
-		
-		if ($_GET['page'] != 'redistats' && get_option('redistats_verification') == '') {
-			add_action('admin_notices', 'message_proceed_to_install');
-		} else if ($_GET['page'] != 'redistats' && get_option('redistats_verification') != md5(get_option('redistats_global_id').get_option('redistats_email').get_option('redistats_api_key').VERIFICATION_SALT)) {
-			add_action('admin_notices', 'error_message_invalid_parameters');
-		} else {
-			function your_redistats() {
-				if (is_multisite()) {
-					$property_id = get_current_blog_id();
-				} else {
-					$property_id = get_option('redistats_property_id');
-				}
-				echo "
+function redistats_tracking() {
+	if (is_multisite()) {
+		$property_id = get_current_blog_id();
+	} else {
+		$property_id = get_site_option('redistats_property_id');
+	}
+	echo "
 <script>
 (function() { // Redistats, track version 1.0
-	var global_id = ".get_option('redistats_global_id').";
+	var global_id = ".get_site_option('redistats_global_id').";
 	var property_id = ".$property_id.";
 	var url = encodeURIComponent(window.location.href.split('#')[0]);
 	var referrer = encodeURIComponent(document.referrer);
@@ -118,13 +68,26 @@ if(class_exists('Redistats')) {
 	s.parentNode.insertBefore(x, s);
   })();
 </script>";
-			}
-				
-			if(get_option('redistats_status') > 0) {
-				add_action('wp_footer', 'your_redistats');
-			}
-		}
-	}
 }
+
+function redistats() {
+	global $hook_prefix;
+	if (!isset($_GET['page'])){
+		$_GET['page'] = 0;
+	}
+	if (is_super_admin() && $_GET['page'] != 'redistats/settings.php' && get_site_option('redistats_verification') == '') {
+		add_action($hook_prefix.'admin_notices', 'message_proceed_to_install');
+	} else if(get_site_option('redistats_status') > 1) {
+		add_action('admin_menu', 'redistats_button');
+	}
+	if(is_super_admin()) {
+		add_action($hook_prefix.'admin_menu', 'redistats_settings');
+	}	
+}
+
+if(get_site_option('redistats_status') > 0 && !is_preview()) {
+	add_action('wp_footer', 'redistats_tracking');
+}
+
 
 ?>
