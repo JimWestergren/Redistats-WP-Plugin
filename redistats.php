@@ -25,20 +25,20 @@ if(is_multisite()) {
 	add_action('_admin_menu', 'redistats' ); 
 	
 	// Admin message, shown if plugin activated but settings not entered
-	function message_proceed_to_install() {
+	function redistats_message_install() {
 		echo('<div class="updated"><p>Redistats: To finish the installation enter the settings <a href="admin.php?page=redistats/settings.php">here</a>.</p></div>');
 	}
 	
 	// Button to the redistats settings
 	function redistats_settings() {
-		add_menu_page('Redistats settings', 'Redistats', 'activate_plugins', WP_PLUGIN_DIR."/redistats/settings.php", '', 'http://staticjw.com/images/stats.png', 110);
+		add_menu_page('Redistats settings', 'Redistats', 'activate_plugins', WP_PLUGIN_DIR."/redistats/settings.php", '', WP_PLUGIN_DIR.'/redistats/icon.png', 110);
 	}
 } else {
 	$hook_prefix = '';
 	add_action('_admin_menu', 'redistats' );
 	
 	// Admin message, shown if plugin activated but settings not entered
-	function message_proceed_to_install() {
+	function redistats_message_install() {
 		echo('<div class="updated"><p>Redistats: To finish the installation enter the settings <a href="options-general.php?page=redistats/settings.php">here</a>.</p></div>');
 	}
 	
@@ -56,7 +56,7 @@ function redistats_button() {
 	} else {
 		$button_name = 'Redistats';
 	}
-	add_menu_page('Stats', $button_name, 'add_users', WP_PLUGIN_DIR."/redistats/view.php", '', 'http://staticjw.com/images/stats.png', 110);
+	add_menu_page('Stats', $button_name, 'add_users', WP_PLUGIN_DIR.'/redistats/view.php', '', WP_PLUGIN_DIR.'/redistats/icon.png', 110);
 }
 
 // Function for outputting the tracking script
@@ -91,7 +91,7 @@ function redistats() {
 	
 	// Display admin message with a link to the settings for installation of not done already
 	if (is_super_admin() && $_GET['page'] != 'redistats/settings.php' && get_site_option('redistats_verification') == '') {
-		add_action($hook_prefix.'admin_notices', 'message_proceed_to_install');
+		add_action($hook_prefix.'admin_notices', 'redistats_message_install');
 		
 	// Show a button to view the stats if it has this status
 	} else if(get_site_option('redistats_status') > 1) {

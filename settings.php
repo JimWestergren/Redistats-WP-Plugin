@@ -14,7 +14,7 @@
 		die();
 	}
 	
-	// Encourage Multiusers to have the correct settings
+	// Encourage multisite to have the correct settings
 	if ( is_plugin_active_for_network( 'redistats/redistats.php' ) ) {
 		$network_activated = '<strong>Yes</strong>';
 	} else {
@@ -60,7 +60,7 @@
 		}
 	}
 	?>
-	<p>Notice: These settings will be saved in one place using site_option and the settings are the same for all blogs on this installation (Multisite).</p>
+	<p>Notice: These settings will be saved in one place using site_option and the settings are the same for all blogs on this installation (Multisite). Stats data are stored on Redistats.com servers.</p>
 	<ol>
 		<li><a href="https://redistats.com/register">Register an account with Redistats</a> if you have not already done so.</li>
 		<li>Select your global stat property in the <a href="https://redistats.com/dashboard">dashboard</a> (create one if you haven't). If you are using multisite then you should not mix with other stat properties but have a seperate global stat property for this installation.</li>
@@ -71,7 +71,7 @@
 		<table class="form-table">
 			<?php if (is_multisite()) { ?>
 			<tr valign="top">
-				<th scope="row">Plugin is network activated (multiuser):</th>
+				<th scope="row">Plugin is network activated (multisite):</th>
 				<td><?php echo $network_activated; ?></td>
 			</tr>
 			<?php } ?>
