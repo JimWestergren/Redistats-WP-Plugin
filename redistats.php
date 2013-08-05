@@ -3,7 +3,7 @@
 Plugin Name: Redistats
 Plugin URI: https://redistats.com/wordpress-plugin 
 Description: Web stats especially made for WordPress Multisite with a large number of blogs but also works on a single blog. No additional load on your server.
-Version: 0.1
+Version: 0.2
 Author: TodaysWeb (Jim Westergren)
 Author URI: http://www.todaysweb.com/
 License: GPL2
@@ -31,7 +31,7 @@ if(is_multisite()) {
 	
 	// Button to the redistats settings
 	function redistats_settings() {
-		add_menu_page('Redistats settings', 'Redistats', 'activate_plugins', WP_PLUGIN_DIR."/redistats/settings.php", '', WP_PLUGIN_DIR.'/redistats/icon.png', 110);
+		add_menu_page('Redistats settings', 'Redistats', 'activate_plugins', WP_PLUGIN_DIR."/redistats/settings.php", '', plugins_url('redistats/icon.png'), 110);
 	}
 } else {
 	$hook_prefix = '';
@@ -56,7 +56,7 @@ function redistats_button() {
 	} else {
 		$button_name = 'Redistats';
 	}
-	add_menu_page('Stats', $button_name, 'add_users', WP_PLUGIN_DIR.'/redistats/view.php', '', WP_PLUGIN_DIR.'/redistats/icon.png', 110);
+	add_menu_page('Stats', $button_name, 'add_users', WP_PLUGIN_DIR.'/redistats/view.php', '', plugins_url('redistats/icon.png'), 110);
 }
 
 // Function for outputting the tracking script
@@ -76,7 +76,7 @@ function redistats_tracking() {
 	var x = document.createElement('script'), s = document.getElementsByTagName('script')[0];
 	x.src = '//redistats.com/track.js?gid='+global_id+'&pid='+property_id+'&url='+url+'&referrer='+referrer;
 	s.parentNode.insertBefore(x, s);
-  })();
+})();
 </script>";
 }
 
@@ -105,7 +105,7 @@ function redistats() {
 }
 
 // Output the tracking script in the footer of all blogs
-if(get_site_option('redistats_status') > 0 && !is_preview()) {
+if(get_site_option('redistats_status') > 0 && !is_preview() && !isset($_GET['preview'])) {
 	add_action('wp_footer', 'redistats_tracking');
 }
 
