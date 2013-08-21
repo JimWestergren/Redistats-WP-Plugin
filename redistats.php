@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Redistats
+Plugin Name: Redistats - Multisite stats
 Plugin URI: https://redistats.com/wordpress-plugin 
 Description: Web stats especially made for WordPress Multisite with a large number of blogs but also works on a single blog. No additional load on your server.
-Version: 0.2
+Version: 0.3
 Author: TodaysWeb (Jim Westergren)
 Author URI: http://www.todaysweb.com/
 License: GPL2

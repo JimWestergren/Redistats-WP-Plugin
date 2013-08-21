@@ -22,7 +22,7 @@ if (get_site_option('redistats_verification') != md5(get_site_option('redistats_
 	}
 
 	// URL to the stats
-	$iframe_url = "https://redistats.com/stats?gid=".get_site_option( 'redistats_global_id' )."&pid=".$property_id."&hash=".md5(get_site_option('redistats_global_id').$property_id.get_site_option( 'redistats_api_key'));
+	$iframe_url = "https://redistats.com/stats?gid=".get_site_option( 'redistats_global_id' )."&pid=".$property_id."&hash=".md5(get_site_option('redistats_global_id').$property_id.get_site_option( 'redistats_api_key'))."&language=".get_bloginfo('language');
 	
 	// Iframe takes the whole screen
 	echo "<iframe src=\"".$iframe_url."\" style=\"width:100%;height:4000px;\" frameborder=\"0\" seamless></iframe>";
